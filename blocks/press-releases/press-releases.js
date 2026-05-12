@@ -1,6 +1,12 @@
-// corsproxy.io is only needed for the demo domain; production uses same-origin API
-const DEMO_API_BASE = 'https://corsproxy.io/?http://demo.investorroom.com/api/newsfeed_releases';
+const DEMO_API_BASE = 'https://demo.investorroom.com/api/newsfeed_releases';
+const CORS_PROXY = 'https://api.codetabs.com/v1/proxy/?quest=';
 const DEFAULT_LIMIT = 5;
+
+// Routes cross-origin requests through a CORS proxy so they work on production HTTPS
+function proxiedFetch(url) {
+  const isCrossOrigin = !url.startsWith(window.location.origin);
+  return fetch(isCrossOrigin ? CORS_PROXY + encodeURIComponent(url) : url);
+}
 
 function parseCategories(data) {
   if (Array.isArray(data)) return data;
@@ -17,7 +23,7 @@ function parseReleases(data) {
 }
 
 async function fetchCategories(apiBase) {
-  const resp = await fetch(`${apiBase}/list_categories.php?format=json`);
+  const resp = await proxiedFetch(`${apiBase}/list_categories.php?format=json`);
   if (!resp.ok) return [];
   const data = await resp.json();
   return parseCategories(data);
@@ -26,7 +32,7 @@ async function fetchCategories(apiBase) {
 async function fetchReleases(apiBase, { category = '', limit = DEFAULT_LIMIT } = {}) {
   const params = new URLSearchParams({ format: 'json', limit });
   if (category) params.set('category', category);
-  const resp = await fetch(`${apiBase}/list.php?${params}`);
+  const resp = await proxiedFetch(`${apiBase}/list.php?${params}`);
   if (!resp.ok) return [];
   const data = await resp.json();
   return parseReleases(data);
