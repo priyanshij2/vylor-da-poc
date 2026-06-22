@@ -1,4 +1,4 @@
-const DEMO_API_BASE = 'http://demo.investorroom.com/api/newsfeed_releases';
+const DEMO_API_BASE = 'https://demo.investorroom.com/api/newsfeed_releases';
 const DEFAULT_LIMIT = 5;
 
 function parseCategories(data) {
