@@ -1,10 +1,4 @@
 const DEMO_API_BASE = 'https://demo.investorroom.com/api/newsfeed_releases';
-const CORS_PROXY = 'https://api.codetabs.com/v1/proxy/?quest=';
-
-function proxiedFetch(url) {
-  const isCrossOrigin = !url.startsWith(window.location.origin);
-  return fetch(isCrossOrigin ? CORS_PROXY + encodeURIComponent(url) : url);
-}
 
 function formatDate(dateStr) {
   if (!dateStr) return '';
@@ -15,7 +9,7 @@ function formatDate(dateStr) {
 }
 
 async function fetchRelease(apiBase, id) {
-  const resp = await proxiedFetch(`${apiBase}/get.php?id=${id}&format=json&style_in_body=0`);
+  const resp = await fetch(`${apiBase}/get.php?id=${id}&format=json&style_in_body=0`);
   if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
   return resp.json();
 }
